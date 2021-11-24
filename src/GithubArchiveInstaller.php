@@ -1,11 +1,6 @@
 <?php
-/**
- * Installs GitHub archive files from a release when installing from distribution.
- *
- * @package wpscholar/Composer/GithubArchiveInstaller
- */
 
-namespace wpscholar\Composer;
+namespace ET\Composer;
 
 use Composer\Composer;
 use Composer\DependencyResolver\Operation\OperationInterface;
@@ -17,8 +12,6 @@ use Composer\Plugin\PluginInterface;
 
 /**
  * Class GithubArchiveInstaller
- *
- * @package wpscholar\Composer
  */
 class GithubArchiveInstaller implements PluginInterface, EventSubscriberInterface {
 
@@ -75,7 +68,7 @@ class GithubArchiveInstaller implements PluginInterface, EventSubscriberInterfac
 		 */
 		$package = $this->getPackageFromOperation( $event->getOperation() );
 
-		if ( array_key_exists( 'wpscholar/github-archive-installer', $package->getRequires() ) ) {
+		if ( array_key_exists( 'elegantthemes/github-archive-installer', $package->getRequires() ) ) {
 			if ( version_compare( $package->getFullPrettyVersion(), '0.0.0', '>=' ) ) {
 				$package->setDistUrl(
 					sprintf(
@@ -97,7 +90,7 @@ class GithubArchiveInstaller implements PluginInterface, EventSubscriberInterfac
 	 * @return \Composer\Package\PackageInterface The package of the operation
 	 */
 	public function getPackageFromOperation( OperationInterface $operation ) {
-		if ( 'update' === $operation->getJobType() ) {
+		if ( 'update' === $operation->getOperationType() ) {
 			/**
 			 * Operation is an update operation.
 			 *

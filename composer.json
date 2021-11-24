@@ -1,9 +1,14 @@
 {
-  "name": "wpscholar/github-archive-installer",
+  "name": "elegantthemes/github-archive-installer",
   "description": "A custom Composer installer that will install a dependency from a GitHub release archive .zip file when installing from distribution.",
   "type": "composer-plugin",
+  "version": "1.0",
   "license": "GPL-2.0-or-later",
   "authors": [
+    {
+      "name": "Dustin Falgout",
+      "email": "dustin@elegantthemes.com"
+    },
     {
       "name": "Micah Wood",
       "email": "micah@wpscholar.com"
@@ -12,12 +17,16 @@
   "require": {
     "composer-plugin-api": "^1.1 || ^2.0"
   },
+  "require-dev": {
+    "composer/composer": "^2.0"
+  },
   "autoload": {
     "psr-4": {
-      "wpscholar\\Composer\\": "src"
+      "ET\\Composer\\": "src"
     }
   },
   "extra": {
-    "class": "wpscholar\\Composer\\GithubArchiveInstaller"
+    "class": "ET\\Composer\\GithubArchiveInstaller",
+    "plugin-modifies-downloads": true
   }
 }
