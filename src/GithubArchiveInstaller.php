@@ -3,12 +3,10 @@
 namespace ET\Composer;
 
 use Composer\Composer;
-use Composer\DependencyResolver\Operation\OperationInterface;
 use Composer\EventDispatcher\EventSubscriberInterface;
-use Composer\Installer\PackageEvent;
-use Composer\Installer\PackageEvents;
 use Composer\IO\IOInterface;
-use Composer\Plugin\PluginInterface;
+use Composer\Plugin\{PluginInterface, PluginEvents, PreFileDownloadEvent};
+
 
 /**
  * Class GithubArchiveInstaller
@@ -47,64 +45,35 @@ class GithubArchiveInstaller implements PluginInterface, EventSubscriberInterfac
 	 *
 	 * @return array
 	 */
-	public static function getSubscribedEvents() {
+	public static function getSubscribedEvents(): array {
 		return array(
-			PackageEvents::PRE_PACKAGE_INSTALL => 'preInstall',
-			PackageEvents::PRE_PACKAGE_UPDATE  => 'preInstall',
+			PluginEvents::PRE_FILE_DOWNLOAD => 'onPreFileDownload',
 		);
 	}
 
 	/**
 	 * Set distribution URL before installing.
-	 *
-	 * @param \Composer\Installer\PackageEvent $event The package install or update event.
 	 */
-	public function preInstall( PackageEvent $event ) {
+	public function onPreFileDownload( PreFileDownloadEvent $event ) {
 
-		/**
-		 * Get the package instance.
-		 *
-		 * @var \Composer\Package\Package $package
-		 */
-		$package = $this->getPackageFromOperation( $event->getOperation() );
+		/** @var \Composer\Package\Package $package */
+		$package = $event->getContext();
+		$version = $package->getFullPrettyVersion();
 
-		if ( array_key_exists( 'elegantthemes/github-archive-installer', $package->getRequires() ) ) {
-			if ( version_compare( $package->getFullPrettyVersion(), '0.0.0', '>=' ) ) {
-				$package->setDistUrl(
-					sprintf(
-						'https://github.com/%1$s/releases/download/%2$s/%3$s.zip',
-						$package->getName(),
-						$package->getFullPrettyVersion(),
-						explode( '/', $package->getName() )[1]
-					)
-				);
-			}
-		}
-	}
-
-	/**
-	 * Convert operation to package instance.
-	 *
-	 * @param \Composer\DependencyResolver\Operation\OperationInterface $operation The operation
-	 *
-	 * @return \Composer\Package\PackageInterface The package of the operation
-	 */
-	public function getPackageFromOperation( OperationInterface $operation ) {
-		if ( 'update' === $operation->getOperationType() ) {
-			/**
-			 * Operation is an update operation.
-			 *
-			 * @var \Composer\DependencyResolver\Operation\UpdateOperation $operation
-			 */
-			return $operation->getTargetPackage();
+		if ( ! array_key_exists( 'elegantthemes/github-archive-installer', $package->getRequires() ) ) {
+			return;
 		}
 
-		/**
-		 * Operation is an install operation.
-		 *
-		 * @var \Composer\DependencyResolver\Operation\InstallOperation $operation
-		 */
-		return $operation->getPackage();
+		if ( ! version_compare( $version, '0.0.0', '>=' ) ) {
+			return;
+		}
+
+		$repo      = $package->getName();
+		$repo_name = $package->getExtra()['installer-name'] ?? explode( '/', $repo )[1];
+		$dist_url  = "https://github.com/{$repo}/releases/download/{$version}/{$repo_name}.zip";
+
+		$package->setDistUrl( $dist_url );
+		$event->setProcessedUrl( $dist_url );
 	}
 
 	/**
