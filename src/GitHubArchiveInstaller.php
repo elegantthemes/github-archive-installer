@@ -11,7 +11,7 @@ use Composer\Plugin\{PluginInterface, PluginEvents, PreFileDownloadEvent};
 /**
  * Class GithubArchiveInstaller
  */
-class GithubArchiveInstaller implements PluginInterface, EventSubscriberInterface {
+class GitHubArchiveInstaller implements PluginInterface, EventSubscriberInterface {
 
 	const PACKAGE_TYPE = 'github-archive-installer';
 
@@ -69,8 +69,12 @@ class GithubArchiveInstaller implements PluginInterface, EventSubscriberInterfac
 		}
 
 		$repo      = $package->getName();
-		$repo_name = $package->getExtra()['installer-name'] ?? explode( '/', $repo )[1];
-		$dist_url  = "https://github.com/{$repo}/releases/download/{$version}/{$repo_name}.zip";
+		$org_name  = $package->getExtra()['dist-url-override']['org-name'] ?? explode( '/', $repo )[0];
+		$repo_name = $package->getExtra()['dist-url-override']['repo-name'] ?? explode( '/', $repo )[1];
+		$file_name = $package->getExtra()['dist-url-override']['file-name'] ?? "{$repo_name}.zip";
+		$file_name = str_replace( '<VERSION>', $version, $file_name );
+
+		$dist_url = "https://github.com/{$org_name}/{$repo_name}/releases/download/{$version}/{$file_name}";
 
 		$package->setDistUrl( $dist_url );
 		$event->setProcessedUrl( $dist_url );
