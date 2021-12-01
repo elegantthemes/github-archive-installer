@@ -58,6 +58,11 @@ class GitHubArchiveInstaller implements PluginInterface, EventSubscriberInterfac
 
 		/** @var \Composer\Package\Package $package */
 		$package = $event->getContext();
+
+		if ( is_array( $package ) ) {
+			return;
+		}
+
 		$version = $package->getFullPrettyVersion();
 
 		if ( ! array_key_exists( 'elegantthemes/github-archive-installer', $package->getRequires() ) ) {

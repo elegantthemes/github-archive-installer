@@ -2,7 +2,7 @@
   "name": "elegantthemes/github-archive-installer",
   "description": "A custom Composer installer that will install a dependency from a GitHub release archive .zip file when installing from distribution.",
   "type": "composer-plugin",
-  "version": "2.1.2",
+  "version": "2.1.3",
   "license": "GPL-2.0-or-later",
   "authors": [
     {
