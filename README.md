@@ -23,6 +23,6 @@ The following options can be included in `composer.json` to customize how the di
 |--------------------------------|-----------------------------------------------------------------------------------------------------------|-------------------------------------------------------|------------------------------|
 | extra.dist-url-override.org-name  | GitHub org/user name                                                                                      | The part of the composer package name before the "/". | elegantthemes                |
 | extra.dist-url-override.repo-name | GitHub repo name                                                                                          | The part of the composer package name after the "/".  | github-archive-installer     |
-| extra.dist-url-override.file-name | GitHub release file name. If included, the pattern '<VERSION>' will be replaced with the current version. | `${repo-name}.zip`                                    | github-archive-installer.zip |
+| extra.dist-url-override.file-name | GitHub release file name. If included, the pattern `<VERSION>` will be replaced with the current version. | `${repo-name}.zip`                                    | github-archive-installer.zip |
 
 The generated dist download URL will look like this: `https://github.com/${org-name}/${repo-name}/releases/download/${version}/${filename}`
